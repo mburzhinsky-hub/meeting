@@ -1,169 +1,773 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Для тебя" />
   <meta name="theme-color" content="#09090c" />
+  <meta name="format-detection" content="telephone=no,date=no,address=no,email=no,url=no" />
   <title>Для тебя</title>
-
   <style>
+    :root {
+      --bg: #09090c;
+      --bg-2: #111117;
+      --card: rgba(255,255,255,0.08);
+      --card-2: rgba(255,255,255,0.05);
+      --line: rgba(255,255,255,0.11);
+      --text: #f6f1e8;
+      --muted: rgba(246,241,232,0.72);
+      --gold: #d9b46b;
+      --gold-2: #f1d59d;
+      --rose: #cf8d9a;
+      --blue: #6f94cf;
+      --shadow: 0 16px 40px rgba(0,0,0,0.35);
+      --radius: 26px;
+      --radius-sm: 18px;
+      --safe-top: env(safe-area-inset-top);
+      --safe-bottom: env(safe-area-inset-bottom);
+      --vh: 1vh;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif; }
     body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #0a0a0d;
-      color: #fff;
+      min-height: 100vh;
+      min-height: calc(var(--vh, 1vh) * 100);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(207,141,154,0.18), transparent 28%),
+        radial-gradient(circle at 100% 10%, rgba(217,180,107,0.14), transparent 22%),
+        linear-gradient(180deg, #0a0a0d 0%, #101017 100%);
       overflow-x: hidden;
+      overscroll-behavior-y: none;
     }
 
-    .container {
-      max-width: 420px;
-      margin: auto;
-      padding: 20px;
+    .ambient, .ambient::before, .ambient::after {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      z-index: 0;
+    }
+    .ambient {
+      background-image: radial-gradient(rgba(255,255,255,0.7) 0.6px, transparent 0.6px);
+      background-size: 8px 8px;
+      opacity: 0.035;
+    }
+    .ambient::before {
+      background: radial-gradient(circle at 18% 18%, rgba(217,180,107,0.10), transparent 24%);
+      animation: driftA 12s ease-in-out infinite alternate;
+    }
+    .ambient::after {
+      background: radial-gradient(circle at 82% 20%, rgba(207,141,154,0.12), transparent 26%);
+      animation: driftB 14s ease-in-out infinite alternate;
     }
 
-    .card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 24px;
-      padding: 20px;
-      margin-bottom: 16px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+    @keyframes driftA { from { transform: translateY(0) scale(1); } to { transform: translateY(20px) scale(1.04); } }
+    @keyframes driftB { from { transform: translateY(0) scale(1); } to { transform: translateY(-18px) scale(1.03); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%,100% { transform: scale(1); opacity: .55; } 50% { transform: scale(1.06); opacity: .9; } }
+    @keyframes bob { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
+    @keyframes shine { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
 
-    h1 {
-      font-size: 42px;
-      line-height: 1;
-      margin: 10px 0;
-    }
-
-    p {
-      color: rgba(255,255,255,0.7);
-      line-height: 1.5;
-    }
-
-    .heart {
-      font-size: 60px;
-      text-align: center;
-      margin: 20px 0;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .heart:active {
-      transform: scale(0.9);
-    }
-
-    .btn {
-      display: block;
+    .app {
+      position: relative;
+      z-index: 1;
       width: 100%;
-      padding: 16px;
+      max-width: 430px;
+      margin: 0 auto;
+      padding: calc(14px + var(--safe-top)) 14px calc(24px + var(--safe-bottom));
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 32px;
+      padding: 18px;
+      min-height: 88svh;
+      min-height: calc(var(--vh, 1vh) * 88);
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04)),
+        radial-gradient(circle at 0% 0%, rgba(217,180,107,0.16), transparent 30%);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      animation: fadeUp .8s ease both;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: max-content;
+      padding: 10px 14px;
       border-radius: 999px;
-      border: none;
-      margin-top: 10px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .headline {
+      margin: 18px 0 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(42px, 12vw, 64px);
+      line-height: .94;
+      letter-spacing: -0.05em;
+      font-weight: 600;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.55;
+      max-width: 30ch;
+      margin: 0;
+    }
+
+    .orb {
+      position: relative;
+      margin: 22px auto 18px;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+    }
+    .orb::before, .orb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+    .orb::before {
+      background: radial-gradient(circle, rgba(217,180,107,0.26), transparent 62%);
+      filter: blur(10px);
+    }
+    .orb::after {
+      border: 1px solid rgba(255,255,255,0.12);
+      animation: pulse 6s ease-in-out infinite;
+    }
+    .rings span {
+      position: absolute;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.1);
+      animation: pulse 7s ease-in-out infinite;
+    }
+    .rings span:nth-child(1) { width: 110px; height: 110px; }
+    .rings span:nth-child(2) { width: 170px; height: 170px; animation-delay: .7s; }
+    .rings span:nth-child(3) { width: 230px; height: 230px; animation-delay: 1.4s; }
+    .heart {
+      position: relative;
+      width: 92px;
+      height: 92px;
+      border-radius: 28px;
+      display: grid;
+      place-items: center;
+      font-size: 40px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.26);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .tap-note {
+      text-align: center;
+      font-size: 13px;
+      color: rgba(246,241,232,0.58);
+      margin-top: 8px;
+    }
+
+    .reveal-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 22px;
+      padding: 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.11);
+      transform-style: preserve-3d;
+      transition: transform .5s ease, background .3s ease;
+    }
+
+    .reveal-card.active { background: rgba(255,255,255,0.09); transform: scale(1.01); }
+    .reveal-title { font-size: 13px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .08em; }
+    .reveal-content { font-size: 18px; line-height: 1.45; min-height: 56px; }
+    .reveal-glow {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.18) 50%, transparent 65%);
+      transform: translateX(-120%);
+      pointer-events: none;
+    }
+    .reveal-card.active .reveal-glow { animation: shine 1.1s ease; }
+
+    .cta-stack { display: grid; gap: 12px; margin-top: 16px; }
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      min-height: 54px;
+      padding: 0 18px;
       font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .primary {
-      background: linear-gradient(180deg,#f1d59d,#d9b46b);
-      color: black;
-    }
-
-    .secondary {
-      background: rgba(255,255,255,0.08);
-      color: white;
-    }
-
-    .timeline div {
-      margin-bottom: 12px;
-    }
-
-    .map {
-      height: 200px;
-      border-radius: 20px;
-      background: linear-gradient(180deg,#1a1a22,#111);
+      font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
-      color: rgba(255,255,255,0.5);
+      gap: 10px;
+      text-decoration: none;
+      transition: transform .18s ease, opacity .18s ease;
+    }
+    .btn:active { transform: scale(.985); }
+    .btn-primary {
+      color: #16120a;
+      background: linear-gradient(180deg, var(--gold-2), var(--gold));
+      box-shadow: 0 12px 30px rgba(217,180,107,0.28);
+    }
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
-    .hidden {
-      display: none;
+    .section {
+      margin-top: 14px;
+      border-radius: 28px;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      animation: fadeUp .8s ease both;
+    }
+    .section:nth-of-type(2) { animation-delay: .08s; }
+    .section:nth-of-type(3) { animation-delay: .16s; }
+    .section:nth-of-type(4) { animation-delay: .24s; }
+
+    .section-title {
+      margin: 0 0 6px;
+      font-size: 26px;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+    .section-sub { margin: 0 0 16px; color: var(--muted); line-height: 1.55; }
+
+    .swipe-wrap {
+      overflow-x: auto;
+      display: flex;
+      gap: 12px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .swipe-wrap::-webkit-scrollbar { display: none; }
+
+    .mini-card {
+      scroll-snap-align: start;
+      min-width: 82%;
+      border-radius: 22px;
+      padding: 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.11);
+    }
+    .mini-card .k { font-size: 12px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+    .mini-card .v { font-size: 20px; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+    .mini-card p { margin: 0; color: var(--muted); line-height: 1.55; }
+
+    .map {
+      position: relative;
+      overflow: hidden;
+      height: 380px;
+      border-radius: 26px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)),
+        radial-gradient(circle at 20% 20%, rgba(217,180,107,0.12), transparent 20%),
+        radial-gradient(circle at 80% 80%, rgba(207,141,154,0.10), transparent 24%);
+      border: 1px solid rgba(255,255,255,0.10);
+      margin-top: 8px;
+    }
+    .grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 34px 34px;
+      opacity: .75;
+    }
+    .river {
+      position: absolute;
+      left: 53%;
+      top: -10%;
+      width: 108px;
+      height: 130%;
+      transform: translateX(-50%) rotate(12deg);
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(111,148,207,0.55), rgba(111,148,207,0.22));
+      box-shadow: inset 0 0 20px rgba(255,255,255,0.1);
+    }
+    .river::after {
+      content: "Москва-река";
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      transform: translate(-50%, -50%) rotate(79deg);
+      color: rgba(255,255,255,0.54);
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .path { position: absolute; inset: 0; pointer-events: none; }
+    .path svg { width: 100%; height: 100%; display: block; }
+    .route-line {
+      stroke: url(#goldLine);
+      stroke-width: 4;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 8 10;
+      opacity: .9;
+      animation: routeShift 18s linear infinite;
+    }
+    @keyframes routeShift { from { stroke-dashoffset: 240; } to { stroke-dashoffset: 0; } }
+
+    .pin {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #fff5d7, var(--gold));
+      box-shadow: 0 0 0 6px rgba(217,180,107,0.16), 0 12px 24px rgba(0,0,0,0.28);
+      animation: bob 3.4s ease-in-out infinite;
+      z-index: 2;
+    }
+    .pin.p1 { left: 58%; top: 16%; }
+    .pin.p2 { left: 56%; top: 36%; animation-delay: .4s; }
+    .pin.p3 { left: 53%; top: 55%; animation-delay: .8s; }
+    .pin.p4 { left: 60%; top: 79%; animation-delay: 1.2s; }
+
+    .label {
+      position: absolute;
+      z-index: 2;
+      max-width: 160px;
+      padding: 12px 12px 10px;
+      border-radius: 16px;
+      background: rgba(9,9,12,0.76);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.24);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .label b { display: block; font-size: 14px; margin-bottom: 4px; }
+    .label span { font-size: 12px; color: var(--muted); line-height: 1.35; }
+    .l1 { left: 10px; top: 30px; }
+    .l2 { left: 12px; top: 132px; }
+    .l3 { right: 10px; top: 204px; }
+    .l4 { left: 16px; bottom: 18px; }
+
+    .map-hint { margin-top: 12px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+    .step {
+      border-radius: 22px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.11);
+      padding: 15px;
+      display: grid;
+      grid-template-columns: 76px 1fr;
+      gap: 12px;
+      align-items: start;
+      transition: transform .2s ease, background .2s ease;
+    }
+    .step.active { background: rgba(255,255,255,0.10); transform: translateY(-1px); }
+    .time {
+      border-radius: 14px;
+      min-height: 46px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: #f8deab;
+      background: rgba(217,180,107,0.14);
+      border: 1px solid rgba(217,180,107,0.24);
+    }
+    .step h3 { margin: 0 0 6px; font-size: 20px; line-height: 1.12; }
+    .step p { margin: 0; color: var(--muted); line-height: 1.55; }
+
+    .secret {
+      display: grid;
+      gap: 12px;
+    }
+    .secret-card {
+      border-radius: 22px;
+      padding: 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.11);
+    }
+    .secret-btn {
+      width: 100%;
+      margin-top: 12px;
+    }
+    .secret-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .35s ease, opacity .35s ease, margin-top .35s ease;
+      opacity: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 0;
+    }
+    .secret-card.open .secret-answer {
+      max-height: 180px;
+      opacity: 1;
+      margin-top: 12px;
+    }
+
+    .footer {
+      padding: 18px 10px 6px;
+      text-align: center;
+      color: rgba(246,241,232,0.48);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .sheet {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      padding: 0 12px calc(12px + var(--safe-bottom));
+      transform: translateY(110%);
+      transition: transform .34s ease;
+      pointer-events: none;
+    }
+    .sheet.open { transform: translateY(0); pointer-events: auto; }
+    .sheet-card {
+      border-radius: 28px 28px 20px 20px;
+      background: rgba(16,16,23,0.96);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.42);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 12px 16px 18px;
+    }
+    .handle {
+      width: 42px;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      margin: 2px auto 12px;
+    }
+    .sheet h4 { margin: 0 0 8px; font-size: 20px; }
+    .sheet p { margin: 0 0 14px; color: var(--muted); line-height: 1.6; }
+    .sheet-actions { display: grid; gap: 10px; }
+
+    .floating-bar {
+      position: sticky;
+      bottom: calc(12px + var(--safe-bottom));
+      z-index: 10;
+      margin-top: 14px;
+      padding: 8px;
+      display: flex;
+      gap: 8px;
+      border-radius: 999px;
+      background: rgba(12,12,18,0.78);
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+    }
+    .floating-bar .btn { min-height: 48px; font-size: 15px; }
+    .floating-bar .btn:first-child { flex: 1.2; }
+    .floating-bar .btn:last-child { flex: 1; }
+
+    @media (min-width: 431px) {
+      body { display: flex; justify-content: center; }
+      .app { max-width: 430px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .route-line { stroke-dasharray: none; }
     }
   </style>
-
 </head>
-
 <body>
-  <div class="container">
+  <div class="ambient"></div>
 
-```
-<div class="card">
-  <h1>У меня есть план</h1>
-  <p>на 4 апреля… и он про нас</p>
+  <main class="app">
+    <section class="hero">
+      <div>
+        <div class="chip">04 апреля · Москва · только мы вдвоём</div>
+        <h1 class="headline">У меня есть план на нас</h1>
+        <p class="sub">Не просто поужинать. Хочу сделать для нас красивый день: спокойно, вкусно и без лишней суеты.</p>
 
-  <div class="heart" onclick="changeText()">♥</div>
-  <p id="text">Нажми на сердце</p>
-</div>
+        <div class="orb" id="loveOrb">
+          <div class="rings"><span></span><span></span><span></span></div>
+          <div class="heart">♥</div>
+        </div>
+        <div class="tap-note">нажми на сердце</div>
 
-<div class="card">
-  <h2>Что будет</h2>
-  <p>ГЭС-2 → набережная → Музеон → Сыроварня</p>
-</div>
+        <div class="reveal-card" id="revealCard">
+          <div class="reveal-glow"></div>
+          <div class="reveal-title">маленький спойлер</div>
+          <div class="reveal-content" id="revealText">Я хочу украсть тебя на несколько часов и сделать этот день очень нашим.</div>
+        </div>
+      </div>
 
-<div class="card map">
-  маршрут вдоль реки (без переездов)
-</div>
+      <div class="cta-stack">
+        <button class="btn btn-primary" id="openInvite">Открыть приглашение</button>
+        <a class="btn btn-secondary" href="#route">Посмотреть маршрут</a>
+      </div>
+    </section>
 
-<div class="card timeline">
-  <div><b>12:00</b> — ГЭС-2</div>
-  <div><b>12:50</b> — прогулка</div>
-  <div><b>13:20</b> — Музеон</div>
-  <div><b>14:00</b> — Сыроварня</div>
-</div>
+    <section class="section">
+      <h2 class="section-title">Что тебя ждёт</h2>
+      <p class="section-sub">Всё в центре, всё по одному маршруту и почти без переездов. Просто красивое дневное свидание, которое плавно течёт само.</p>
 
-<div class="card">
-  <p>Пойдешь со мной?</p>
-  <button class="btn primary" onclick="accept()">Да ♥</button>
-  <button class="btn secondary" onclick="more()">А что за план?</button>
+      <div class="swipe-wrap" aria-label="Карточки программы">
+        <article class="mini-card">
+          <div class="k">Старт</div>
+          <div class="v">ГЭС-2</div>
+          <p>Спокойное красивое начало. Немного эстетики, немного воздуха, никакой суеты.</p>
+        </article>
+        <article class="mini-card">
+          <div class="k">Прогулка</div>
+          <div class="v">Набережная</div>
+          <p>Идём вдоль воды в лёгком темпе. Просто рядом, просто вдвоём.</p>
+        </article>
+        <article class="mini-card">
+          <div class="k">Атмосфера</div>
+          <div class="v">Музеон</div>
+          <p>Короткая прогулка через парк, чтобы день не был слишком прямолинейным.</p>
+        </article>
+        <article class="mini-card">
+          <div class="k">Финал</div>
+          <div class="v">Сыроварня</div>
+          <p>Вкусный обед и время никуда не спешить. Самая правильная точка завершения.</p>
+        </article>
+      </div>
+    </section>
 
-  <p id="answer" class="hidden"></p>
-</div>
-```
+    <section class="section" id="route">
+      <h2 class="section-title">Наш маршрут</h2>
+      <p class="section-sub">Нарисовал его так, чтобы всё читалось с айфона: сверху вниз, как один цельный день.</p>
 
+      <div class="map">
+        <div class="grid"></div>
+        <div class="river"></div>
+
+        <div class="path">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="goldLine" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#f2d79f" />
+                <stop offset="100%" stop-color="#d9b46b" />
+              </linearGradient>
+            </defs>
+            <path class="route-line" d="M58,18 C57,23 58,30 56,36 C54,42 54,49 53,56 C52,62 56,71 60,80" />
+          </svg>
+        </div>
+
+        <div class="pin p1"></div>
+        <div class="pin p2"></div>
+        <div class="pin p3"></div>
+        <div class="pin p4"></div>
+
+        <div class="label l1"><b>12:00 · ГЭС-2</b><span>Красивый старт и немного искусства</span></div>
+        <div class="label l2"><b>12:50 · Вдоль воды</b><span>Прогулка по набережной без спешки</span></div>
+        <div class="label l3"><b>13:20 · Музеон</b><span>Короткий мягкий вау-момент</span></div>
+        <div class="label l4"><b>14:00 · Сыроварня</b><span>Финал, в котором вкусно и хорошо</span></div>
+      </div>
+      <p class="map-hint">Логика очень простая: стартуем в ГЭС-2, выходим к воде, идём по прямой, заходим в Музеон и заканчиваем в Сыроварне.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Тайминг дня</h2>
+      <div class="timeline" id="timeline">
+        <article class="step active">
+          <div class="time">12:00</div>
+          <div>
+            <h3>ГЭС-2</h3>
+            <p>Спокойно заходим, гуляем, впитываем атмосферу и настраиваемся на день.</p>
+          </div>
+        </article>
+        <article class="step">
+          <div class="time">12:50</div>
+          <div>
+            <h3>Выходим к воде</h3>
+            <p>Никаких такси и дерготни. Просто идём вдоль реки и разговариваем.</p>
+          </div>
+        </article>
+        <article class="step">
+          <div class="time">13:20</div>
+          <div>
+            <h3>Музеон</h3>
+            <p>Немного парка, немного воздуха и ощущение, что день красиво переливается из одной сцены в другую.</p>
+          </div>
+        </article>
+        <article class="step">
+          <div class="time">14:00</div>
+          <div>
+            <h3>Сыроварня</h3>
+            <p>Садимся и уже никуда не торопимся. Просто вкусно, тепло и очень по-нашему.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Короткий вопрос</h2>
+      <p class="section-sub">Согласишься провести со мной этот день?</p>
+      <div class="secret">
+        <div class="secret-card" id="yesCard">
+          <div style="font-size:20px;font-weight:700;line-height:1.2;">У меня, кажется, очень хорошая идея на 4 апреля.</div>
+          <button class="btn btn-primary secret-btn" id="yesBtn">Да, я согласна ♥</button>
+          <div class="secret-answer">Тогда официально: 4 апреля я тебя забираю, и у нас будет очень красивое свидание в центре Москвы.</div>
+        </div>
+        <div class="secret-card" id="hintCard">
+          <div style="font-size:18px;font-weight:700;line-height:1.25;">А если нужен ещё один аргумент</div>
+          <button class="btn btn-secondary secret-btn" id="hintBtn">Открыть маленький секрет</button>
+          <div class="secret-answer">Я специально продумал маршрут так, чтобы нам не пришлось никуда мчаться. Только мы, хороший день и Сыроварня в финале.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="floating-bar">
+      <button class="btn btn-primary" id="floatingInvite">Я тебя приглашаю</button>
+      <a class="btn btn-secondary" href="#route">Маршрут</a>
+    </div>
+
+    <div class="footer">Сделано с любовью специально для тебя.</div>
+  </main>
+
+  <div class="sheet" id="sheet">
+    <div class="sheet-card">
+      <div class="handle"></div>
+      <h4>Приглашение</h4>
+      <p>4 апреля. Начало в 12:00. Я хочу провести с тобой несколько часов в центре Москвы: начать в ГЭС-2, пройтись вдоль воды, заглянуть в Музеон и закончить всё в Сыроварне. Очень хочу, чтобы ты сказала мне да.</p>
+      <div class="sheet-actions">
+        <button class="btn btn-primary" id="acceptBtn">Да, это звучит идеально</button>
+        <button class="btn btn-secondary" id="closeSheet">Закрыть</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    const texts = [
-      "Я хочу провести этот день с тобой",
-      "Без суеты, просто вдвоем",
-      "И закончить всё в Сыроварне"
+    const setVh = () => {
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    };
+    setVh();
+    window.addEventListener('resize', setVh);
+    window.addEventListener('orientationchange', setVh);
+
+    const vibrate = (ms = 18) => {
+      if (navigator.vibrate) navigator.vibrate(ms);
+    };
+
+    const revealTexts = [
+      'Я хочу украсть тебя на несколько часов и сделать этот день очень нашим.',
+      'Без суеты, без долгих переездов. Только красивый маршрут и мы вдвоём.',
+      'Финальная точка у меня уже выбрана: идём в Сыроварню.'
     ];
+    let revealIndex = 0;
 
-    let i = 0;
+    const revealCard = document.getElementById('revealCard');
+    const revealText = document.getElementById('revealText');
+    const loveOrb = document.getElementById('loveOrb');
 
-    function changeText() {
-      i = (i + 1) % texts.length;
-      document.getElementById("text").innerText = texts[i];
-      if (navigator.vibrate) navigator.vibrate(20);
-    }
+    const cycleReveal = () => {
+      revealIndex = (revealIndex + 1) % revealTexts.length;
+      revealCard.classList.remove('active');
+      requestAnimationFrame(() => {
+        revealText.textContent = revealTexts[revealIndex];
+        revealCard.classList.add('active');
+      });
+      vibrate();
+    };
 
-    function accept() {
-      document.getElementById("answer").classList.remove("hidden");
-      document.getElementById("answer").innerText = "Тогда это официально свидание ♥";
-    }
+    loveOrb.addEventListener('click', cycleReveal);
+    revealCard.addEventListener('click', cycleReveal);
 
-    function more() {
-      document.getElementById("answer").classList.remove("hidden");
-      document.getElementById("answer").innerText = "Я всё продумал. Тебе понравится :)";
-    }
+    const sheet = document.getElementById('sheet');
+    const openInvite = document.getElementById('openInvite');
+    const floatingInvite = document.getElementById('floatingInvite');
+    const closeSheet = document.getElementById('closeSheet');
+    const acceptBtn = document.getElementById('acceptBtn');
+
+    const openSheet = () => { sheet.classList.add('open'); vibrate(); };
+    const closeSheetFn = () => sheet.classList.remove('open');
+
+    openInvite.addEventListener('click', openSheet);
+    floatingInvite.addEventListener('click', openSheet);
+    closeSheet.addEventListener('click', closeSheetFn);
+    sheet.addEventListener('click', (e) => { if (e.target === sheet) closeSheetFn(); });
+    acceptBtn.addEventListener('click', () => {
+      acceptBtn.textContent = 'Тогда это свидание официально назначено ♥';
+      acceptBtn.disabled = true;
+      acceptBtn.style.opacity = '.92';
+      vibrate(30);
+    });
+
+    let startY = null;
+    document.querySelector('.sheet-card').addEventListener('touchstart', (e) => {
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    document.querySelector('.sheet-card').addEventListener('touchmove', (e) => {
+      if (startY === null) return;
+      const diff = e.touches[0].clientY - startY;
+      if (diff > 80) closeSheetFn();
+    }, { passive: true });
+
+    const secretCards = [
+      { btn: document.getElementById('yesBtn'), card: document.getElementById('yesCard') },
+      { btn: document.getElementById('hintBtn'), card: document.getElementById('hintCard') }
+    ];
+    secretCards.forEach(({ btn, card }) => {
+      btn.addEventListener('click', () => {
+        card.classList.toggle('open');
+        vibrate();
+      });
+    });
+
+    const steps = Array.from(document.querySelectorAll('.step'));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          steps.forEach(s => s.classList.remove('active'));
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.65 });
+    steps.forEach(step => observer.observe(step));
+
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const id = link.getAttribute('href');
+        const el = document.querySelector(id);
+        if (!el) return;
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        vibrate(12);
+      });
+    });
   </script>
-
 </body>
 </html>
