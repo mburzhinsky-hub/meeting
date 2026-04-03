@@ -3,10 +3,10 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#0a0a0d" />
+  <meta name="theme-color" content="#09090c" />
   <title>Для тебя</title>
 
   <style>
@@ -14,7 +14,8 @@
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       background: #0a0a0d;
-      color: #ffffff;
+      color: #fff;
+      overflow-x: hidden;
     }
 
     .container {
@@ -24,28 +25,23 @@
     }
 
     .card {
-      background: rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.05);
       border-radius: 24px;
       padding: 20px;
       margin-bottom: 16px;
-      border: 1px solid rgba(255,255,255,0.12);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
     }
 
     h1 {
       font-size: 42px;
-      margin: 10px 0;
       line-height: 1;
-    }
-
-    h2 {
-      margin: 0 0 10px;
+      margin: 10px 0;
     }
 
     p {
-      color: rgba(255,255,255,0.75);
+      color: rgba(255,255,255,0.7);
       line-height: 1.5;
-      margin: 0;
     }
 
     .heart {
@@ -68,20 +64,18 @@
       border: none;
       margin-top: 10px;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: bold;
       cursor: pointer;
-      text-align: center;
     }
 
-    .btn-primary {
-      background: linear-gradient(180deg,#f2d79f,#d9b46b);
-      color: #1a1408; /* фикс читаемости */
+    .primary {
+      background: linear-gradient(180deg,#f1d59d,#d9b46b);
+      color: black;
     }
 
-    .btn-secondary {
+    .secondary {
       background: rgba(255,255,255,0.08);
-      color: #ffffff;
-      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
     }
 
     .timeline div {
@@ -116,14 +110,6 @@
 
   <div class="heart" onclick="changeText()">♥</div>
   <p id="text">Нажми на сердце</p>
-
-  <button class="btn btn-primary" onclick="openInvite()">Открыть приглашение</button>
-  <button class="btn btn-secondary" onclick="scrollToRoute()">Посмотреть маршрут</button>
-</div>
-
-<div class="card" id="invite" class="hidden">
-  <h2>Приглашение</h2>
-  <p>Я хочу провести с тобой этот день: спокойно, красиво и без суеты.</p>
 </div>
 
 <div class="card">
@@ -131,7 +117,7 @@
   <p>ГЭС-2 → набережная → Музеон → Сыроварня</p>
 </div>
 
-<div class="card map" id="route">
+<div class="card map">
   маршрут вдоль реки (без переездов)
 </div>
 
@@ -144,8 +130,8 @@
 
 <div class="card">
   <p>Пойдешь со мной?</p>
-  <button class="btn btn-primary" onclick="accept()">Да ♥</button>
-  <button class="btn btn-secondary" onclick="more()">А что за план?</button>
+  <button class="btn primary" onclick="accept()">Да ♥</button>
+  <button class="btn secondary" onclick="more()">А что за план?</button>
 
   <p id="answer" class="hidden"></p>
 </div>
@@ -169,23 +155,13 @@
     }
 
     function accept() {
-      const el = document.getElementById("answer");
-      el.classList.remove("hidden");
-      el.innerText = "Тогда это официально свидание ♥";
+      document.getElementById("answer").classList.remove("hidden");
+      document.getElementById("answer").innerText = "Тогда это официально свидание ♥";
     }
 
     function more() {
-      const el = document.getElementById("answer");
-      el.classList.remove("hidden");
-      el.innerText = "Я всё продумал. Тебе понравится :)";
-    }
-
-    function openInvite() {
-      document.getElementById("invite").scrollIntoView({ behavior: "smooth" });
-    }
-
-    function scrollToRoute() {
-      document.getElementById("route").scrollIntoView({ behavior: "smooth" });
+      document.getElementById("answer").classList.remove("hidden");
+      document.getElementById("answer").innerText = "Я всё продумал. Тебе понравится :)";
     }
   </script>
 
